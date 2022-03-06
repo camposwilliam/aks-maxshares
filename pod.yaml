@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: deployment-azuredisk
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      name: deployment-azuredisk
+    spec:
+      containers:
+      - image: nginx
+        name: deployment-azuredisk
+        command:
+        - "/bin/sh"
+        - "-c"
+        - while true; do echo $(hostname) >> /dev/sdx/outfile; sleep 30; done
+        volumeDevices:
+        - name: azure
+          devicePath: /dev/block
+      volumes:
+      - name: azure
+        persistentVolumeClaim:
+          claimName: pvc-azuredisk-magento
